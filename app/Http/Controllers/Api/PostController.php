@@ -14,7 +14,7 @@ class PostController extends Controller
     public function index()
     {
         $posts = Post::all();
-        return response()->json($posts);
+        return response()->json($posts,200);
     }
 
     /**
@@ -53,7 +53,7 @@ class PostController extends Controller
      */
     public function show(Post $id)
     {
-        return response()->json($id);
+        return response()->json($id,200);
     }
 
     /**
@@ -129,6 +129,6 @@ class PostController extends Controller
                 'message' => 'Nothing is found for : ' . $kye,
             ], 404);
         }
-        return response()->json($post);
+        return response()->json($post,200);
     }
 }
