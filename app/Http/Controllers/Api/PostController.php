@@ -24,7 +24,7 @@ class PostController extends Controller
     {
         $request->validate([
             'title' => 'required|string|max:255',
-            'category' => 'required|string|max:100',
+            'category' => 'required|integer|max:100',
             'description' => 'required|string'
         ]);
 
@@ -71,9 +71,10 @@ class PostController extends Controller
         if (!$post) {
             return response()->json([
                 'status' => 'error',
-                'message' => 'Post not found',
-            ]);
+                'message' => 'Post not found by this id : ' . $id,
+            ], 404);
         }
+
         $post->title = $request->title;
         $post->category = $request->category;
         $post->description = $request->description;
@@ -81,15 +82,15 @@ class PostController extends Controller
         if ($post->save()) {
             return response()->json([
                 'status' => 'success',
-                'message' => 'Post updated successfully',
+                'message' => 'Post updated successfully. Id is : ' . $id,
                 'post' => $post
-            ]);
+            ], 200);
         } else {
             return response()->json([
                 'status' => 'error',
                 'message' => 'Something is wrong',
                 'post' => $post
-            ]);
+            ], 500);
         }
     }
 
@@ -98,6 +99,24 @@ class PostController extends Controller
      */
     public function destroy(string $id)
     {
-        //
+        $post = Post::find($id);
+        if (!$post) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Post not found by this id : ' . $id,
+            ], 404);
+        }
+        if ($post->delete()) {
+            return response()->json([
+                'status' => 'success',
+                'message' => 'Post deleted successfully. Id is : ' . $id,
+                'post' => $post
+            ], 204);
+        } else {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Something is wrong'
+            ], 500);
+        }
     }
 }
