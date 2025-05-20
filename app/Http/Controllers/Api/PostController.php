@@ -24,7 +24,7 @@ class PostController extends Controller
     {
         $request->validate([
             'title' => 'required|string|max:255',
-            'category' => 'required|integer|max:100',
+            'category' => 'required|string|max:100',
             'description' => 'required|string'
         ]);
 
@@ -51,9 +51,9 @@ class PostController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Post $post)
+    public function show(Post $id)
     {
-        return response()->json($post);
+        return response()->json($id);
     }
 
     /**
@@ -111,12 +111,24 @@ class PostController extends Controller
                 'status' => 'success',
                 'message' => 'Post deleted successfully. Id is : ' . $id,
                 'post' => $post
-            ], 204);
+            ], 200);
         } else {
             return response()->json([
                 'status' => 'error',
                 'message' => 'Something is wrong'
             ], 500);
         }
+    }
+
+    public function search($kye)
+    {
+        $post = Post::where('id','like','%'.$kye.'%')->orWhere('title', 'like', '%' . $kye . '%')->orWhere('category', 'like', '%' . $kye . '%')->orWhere('description', 'like', '%' . $kye . '%')->get();
+        if ($post->isEmpty()) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Nothing is found for : ' . $kye,
+            ], 404);
+        }
+        return response()->json($post);
     }
 }
